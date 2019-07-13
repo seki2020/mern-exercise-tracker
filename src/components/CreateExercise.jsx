@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
+import Axios from 'axios';
 
 class Navbar extends Component {
     constructor(props) {
@@ -15,16 +16,28 @@ class Navbar extends Component {
         this.onSubmit = this.onSubmit.bind(this)
     }
 
-    componentDidMount() {
-        this.setState({
-            users: ["Mike", "Jason"],
-            username:"Mike"
-        })
+    async componentDidMount() {
+        const {data} = await Axios.get(process.env.REACT_APP_ENDPOINT + '/users')
+        if (data !== null) {
+            this.setState({
+                users: data,
+                username: data[0]
+            })
+        }
+
+
+
+
     }
-    onSubmit(e) {
-        debugger
+    async onSubmit(e) {
         e.preventDefault()
         console.log(this.state)
+        const res = await Axios.post(process.env.REACT_APP_ENDPOINT + '/exercise/add', Object.assign({}, { username: '', description: '', duration: '', date: '' }, { ...this.state }))
+        if (res.statusText === 'OK') {
+            alert(res.data)
+            this.setState({ username: '', description: '', duration: '', date: '' })
+            // window.location.href = '/'
+        }
     }
 
 
@@ -45,7 +58,7 @@ class Navbar extends Component {
                             {
                                 this.state.users.map(user => {
                                     return (
-                                        <option key={user} value={user}>{user}</option>
+                                        <option key={user._id} value={user._id}>{user.username}</option>
                                     )
                                 })
                             }

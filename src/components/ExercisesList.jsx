@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import axios from 'axios';
 
 class ExercisesList extends Component {
     constructor(props) {
@@ -7,25 +8,19 @@ class ExercisesList extends Component {
         this.state = {
             list: []
         }
+
+
     }
 
-    componentDidMount() {
-        let list = []
-        for (let i = 0; i < 10; i++) {
-            const seed = () => {
-                return Math.random().toFixed(0)
-            }
-            list.push({
-                "id": seed(),
-                "username": "Sun-" + seed(),
-                "description": "jump-" + seed(),
-                "duration": i,
-                "date": new Date().toISOString(),
-            })
+    async componentDidMount() {
+        try{
+            const res = await axios.get(process.env.REACT_APP_ENDPOINT+'/exercise/')
+            this.setState({ list: res.data })
+        }catch(err){
+            console.log(err)
         }
-
-        this.setState({ list: list })
     }
+
     render() {
         const { list } = this.state
         return (
@@ -45,9 +40,9 @@ class ExercisesList extends Component {
                         {
                             list.map((doc, index) => {
                                 return (
-                                    <tr key={doc.id}>
-                                        <th scope="row"><Link to={'/edit/' + doc.username} >{index + 1}</Link></th>
-                                        <td><Link to={'/edit/' + doc.username} >{doc.username}</Link></td>
+                                    <tr key={doc._id}>
+                                        <th scope="row">{index + 1}</th>
+                                        <td><Link to={'/edit/' + doc._id} >{doc.username}</Link></td>
                                         <td>{doc.description}</td>
                                         <td>{doc.duration}</td>
                                         <td>{doc.date}</td>

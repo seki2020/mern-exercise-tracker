@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import Axios from 'axios';
 
 class CreateUser extends Component{
     constructor(props){
@@ -9,10 +10,16 @@ class CreateUser extends Component{
         this.onSubmit = this.onSubmit.bind(this)
     }
 
-    onSubmit(e){
+    async onSubmit(e){
         e.preventDefault()
         console.log(this.state.username)
         this.setState({username:''})
+
+        const res = await Axios.post(process.env.REACT_APP_ENDPOINT+'/users/add',{username:this.state.username})
+        if(res.statusText === 'OK'){
+            alert('User Added successfully!')
+            this.setState({username:''})
+        }
     }
     render(){
         return (
