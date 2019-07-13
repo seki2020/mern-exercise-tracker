@@ -26,7 +26,7 @@ class ExercisesList extends Component {
         return (
             <div>
                 <h3>Exercise List</h3>
-                <table class="table">
+                <table className="table">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
