@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Axios from 'axios';
 
 class EditExercise extends Component {
     constructor(props) {
@@ -11,17 +12,57 @@ class EditExercise extends Component {
         }
 
         this.onSubmit = this.onSubmit.bind(this)
+        this.onDelete = this.onDelete.bind(this)
     }
-    onSubmit(e) {
+
+    async componentDidMount() {
+        try {
+            const res = await Axios.get(process.env.REACT_APP_ENDPOINT + '/exercise/' + this.props.match.params.id)
+            if (res.data) {
+                this.setState(Object.assign({}, this.state, res.data))
+            } else {
+                // alert(`Can't find this exercise.`)
+                // toHome()
+            }
+        } catch (err) {
+            alert(err)
+        }
+
+    }
+
+    async onSubmit(e) {
         e.preventDefault()
-        console.log(this.state)
+        try {
+            const res = await Axios.post(process.env.REACT_APP_ENDPOINT + '/exercise/update/' + this.props.match.params.id, this.state)
+            if (res.data !== null) {
+                alert('Exercise Updated!')
+                this.setState(res.data)
+            }
+
+
+        } catch (err) {
+            alert(err)
+            toHome()
+        }
+
+    }
+
+    async onDelete() {
+        try {
+            const res = await Axios.delete(process.env.REACT_APP_ENDPOINT + '/exercise/' + this.props.match.params.id)
+            alert('Exercise Deleted!')
+            toHome()
+        } catch (err) {
+            alert(err)
+            toHome()
+        }
+
     }
 
     render() {
-        const { match } = this.props
         return (
             <div>
-                <h3>{match.params.id}</h3>
+                <h3>{this.state.username}</h3>
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group">
                         <label>Username</label>
@@ -49,13 +90,19 @@ class EditExercise extends Component {
                     </div>
 
                     <div className="form-group">
-                        <input type="submit" className="btn btn-primary" value="Update" />
+                        <input type="submit" className="btn btn-primary " value="Update" />
+
+                        <input type="button" className="btn btn-danger" value="Delete" onClick={this.onDelete} />
                     </div>
                 </form>
             </div>
 
         )
     }
+}
+
+const toHome = (url = '/') => {
+    window.location.href = url
 }
 
 export default EditExercise
