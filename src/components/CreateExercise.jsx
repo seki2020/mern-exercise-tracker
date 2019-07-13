@@ -14,6 +14,7 @@ class Navbar extends Component {
             users: []
         }
         this.onSubmit = this.onSubmit.bind(this)
+        
     }
 
     async componentDidMount() {
@@ -21,7 +22,7 @@ class Navbar extends Component {
         if (data !== null) {
             this.setState({
                 users: data,
-                username: data[0]
+                username: data[0].username
             })
         }
 
@@ -32,7 +33,13 @@ class Navbar extends Component {
     async onSubmit(e) {
         e.preventDefault()
         console.log(this.state)
-        const res = await Axios.post(process.env.REACT_APP_ENDPOINT + '/exercise/add', Object.assign({}, { username: '', description: '', duration: '', date: '' }, { ...this.state }))
+        debugger
+        const res = await Axios.post(process.env.REACT_APP_ENDPOINT + '/exercise/add', {
+            username: this.state.username,
+            description: this.state.description,
+            duration: this.state.duration,
+            date: this.state.date
+        })
         if (res.statusText === 'OK') {
             alert(res.data)
             this.setState({ username: '', description: '', duration: '', date: '' })
@@ -54,11 +61,11 @@ class Navbar extends Component {
                             required
                             className="form-control"
                             value={this.state.username}
-                            onChange={e => { this.setState({ username: e.target.value }) }}>
+                            onChange={e => { debugger;this.setState({ username: e.target.value }) }}>
                             {
                                 this.state.users.map(user => {
                                     return (
-                                        <option key={user._id} value={user._id}>{user.username}</option>
+                                        <option key={user._id} value={user.username}>{user.username}</option>
                                     )
                                 })
                             }
